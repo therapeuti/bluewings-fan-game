@@ -1,0 +1,22 @@
+{
+  "name": "bluewings-fan-games",
+  "version": "1.0.0",
+  "description": "수원삼성블루윙즈 팬 게임 애플리케이션",
+  "main": "index.html",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": ["bluewings", "game", "typing"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "tailwindcss": "^3.4.0",
+    "postcss": "^8.4.0",
+    "autoprefixer": "^10.4.0",
+    "prettier": "^3.0.0"
+  }
+}

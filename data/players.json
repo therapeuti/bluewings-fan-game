@@ -1,0 +1,123 @@
+{
+  "players": [
+    {
+      "id": "player_001",
+      "number": 1,
+      "name": "김민준",
+      "position": "GK",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_002",
+      "number": 2,
+      "name": "잠석환",
+      "position": "DF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_003",
+      "number": 3,
+      "name": "모경빈",
+      "position": "DF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_004",
+      "number": 4,
+      "name": "송주훈",
+      "position": "DF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_005",
+      "number": 5,
+      "name": "고종현",
+      "position": "DF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_006",
+      "number": 6,
+      "name": "임지훈",
+      "position": "MF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_007",
+      "number": 7,
+      "name": "페신",
+      "position": "FW",
+      "nationality": "프랑스"
+    },
+    {
+      "id": "player_008",
+      "number": 8,
+      "name": "흥원진",
+      "position": "MF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_009",
+      "number": 9,
+      "name": "일류첸코",
+      "position": "FW",
+      "nationality": "우크라이나"
+    },
+    {
+      "id": "player_010",
+      "number": 10,
+      "name": "이준재",
+      "position": "MF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_011",
+      "number": 11,
+      "name": "윤근영",
+      "position": "FW",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_012",
+      "number": 13,
+      "name": "김정훈",
+      "position": "GK",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_013",
+      "number": 18,
+      "name": "최지묵",
+      "position": "GK",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_014",
+      "number": 21,
+      "name": "강성진",
+      "position": "MF",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_015",
+      "number": 22,
+      "name": "김준홍",
+      "position": "GK",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_016",
+      "number": 32,
+      "name": "정동윤",
+      "position": "GK",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "player_017",
+      "number": 77,
+      "name": "김지현",
+      "position": "GK",
+      "nationality": "대한민국"
+    }
+  ]
+}

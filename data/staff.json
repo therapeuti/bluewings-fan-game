@@ -1,0 +1,46 @@
+{
+  "staff": [
+    {
+      "id": "coach_001",
+      "name": "이정효",
+      "position": "감독",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_002",
+      "name": "마철준",
+      "position": "수석코치",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_003",
+      "name": "조광수",
+      "position": "코치",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_004",
+      "name": "조용태",
+      "position": "코치",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_005",
+      "name": "박원교",
+      "position": "분석관",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_006",
+      "name": "김경도",
+      "position": "피지컬코치",
+      "nationality": "대한민국"
+    },
+    {
+      "id": "coach_007",
+      "name": "신정환",
+      "position": "골키퍼코치",
+      "nationality": "대한민국"
+    }
+  ]
+}

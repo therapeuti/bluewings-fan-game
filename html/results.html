@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>게임 결과 - 블루윙스 팬 게임</title>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="bg-gray-50">
+    <!-- 헤더 -->
+    <header class="bg-gradient-to-r from-bluewings-primary to-bluewings-dark text-white shadow-lg">
+      <div class="max-w-6xl mx-auto px-4 py-6">
+        <h1 class="text-2xl font-bold">🎉 게임 완료!</h1>
+      </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="max-w-4xl mx-auto px-4 py-12">
+      <!-- 결과 섹션 -->
+      <section class="bg-white rounded-lg shadow-md p-8 mb-8">
+        <!-- 평가 메시지 -->
+        <div id="evaluation-section" class="text-center mb-8">
+          <div id="evaluation-emoji" class="text-6xl mb-4">🎮</div>
+          <h2 id="evaluation-text" class="text-3xl font-bold text-gray-800">좋은 점수!</h2>
+        </div>
+
+        <!-- 점수 표시 -->
+        <div class="text-center mb-12">
+          <div id="final-score" class="text-7xl font-bold text-bluewings-primary mb-2">0</div>
+          <p class="text-gray-600">최종 점수</p>
+          <div id="new-record-badge" class="hidden mt-4">
+            <span class="inline-block bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full font-bold">
+              ⭐ 새 최고 기록!
+            </span>
+          </div>
+        </div>
+
+        <!-- 상세 통계 -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-gray-600 text-sm">정확도 / 정답률</p>
+            <p id="accuracy-stat" class="text-2xl font-bold text-bluewings-primary">0%</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-gray-600 text-sm">타자 속도</p>
+            <p id="wpm-stat" class="text-2xl font-bold text-bluewings-primary">0 WPM</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-gray-600 text-sm">소요 시간</p>
+            <p id="time-stat" class="text-2xl font-bold text-bluewings-primary">0:00</p>
+          </div>
+          <div class="bg-gray-50 rounded-lg p-4 text-center">
+            <p class="text-gray-600 text-sm">난이도</p>
+            <p id="difficulty-stat" class="text-2xl font-bold text-bluewings-primary">보통</p>
+          </div>
+        </div>
+
+        <!-- 추가 통계 -->
+        <div id="additional-stats" class="bg-blue-50 rounded-lg p-6 mb-8 hidden">
+          <h3 class="font-bold text-gray-800 mb-4">📊 상세 통계</h3>
+          <div class="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <p class="text-gray-600">총 문제</p>
+              <p id="total-questions" class="font-bold text-lg">0</p>
+            </div>
+            <div>
+              <p class="text-gray-600">정답 개수</p>
+              <p id="correct-answers" class="font-bold text-lg">0</p>
+            </div>
+            <div>
+              <p class="text-gray-600">오답 개수</p>
+              <p id="wrong-answers" class="font-bold text-lg">0</p>
+            </div>
+            <div>
+              <p class="text-gray-600">평균 응답 시간</p>
+              <p id="avg-response-time" class="font-bold text-lg">0초</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 피드백 메시지 -->
+        <div id="feedback-message" class="bg-blue-100 border-l-4 border-bluewings-primary text-bluewings-primary px-4 py-3 rounded">
+          <!-- 동적 피드백 메시지 -->
+        </div>
+      </section>
+
+      <!-- 비교 섹션 -->
+      <section id="comparison-section" class="bg-white rounded-lg shadow-md p-8 mb-8 hidden">
+        <h3 class="text-xl font-bold mb-4">📈 이전 기록과 비교</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-gray-50 rounded-lg p-6">
+            <p class="text-gray-600 text-sm">이전 최고 점수</p>
+            <p id="previous-score" class="text-3xl font-bold text-gray-400">0</p>
+          </div>
+          <div class="bg-green-50 rounded-lg p-6">
+            <p class="text-gray-600 text-sm">향상도</p>
+            <p id="improvement" class="text-3xl font-bold text-green-600">+0%</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 액션 버튼 -->
+      <section class="flex flex-col md:flex-row gap-4 mb-8">
+        <button
+          id="replay-btn"
+          class="flex-1 px-6 py-4 bg-bluewings-primary hover:bg-bluewings-dark text-white rounded-lg font-bold transition-colors text-lg"
+        >
+          🔄 같은 게임 다시하기
+        </button>
+        <button
+          id="other-game-btn"
+          class="flex-1 px-6 py-4 bg-gray-400 hover:bg-gray-500 text-white rounded-lg font-bold transition-colors text-lg"
+        >
+          🎮 다른 게임 선택
+        </button>
+        <button
+          id="home-btn"
+          class="flex-1 px-6 py-4 bg-gray-600 hover:bg-gray-700 text-white rounded-lg font-bold transition-colors text-lg"
+        >
+          🏠 홈으로
+        </button>
+      </section>
+
+      <!-- 팁 섹션 -->
+      <section class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+        <h3 class="font-bold text-gray-800 mb-3">💡 팁</h3>
+        <ul class="text-sm text-gray-700 space-y-2">
+          <li id="tip-1">✓ 더 높은 난이도에 도전해보세요!</li>
+          <li id="tip-2">✓ 정확도를 높이기 위해 천천히 신중하게 입력하세요.</li>
+          <li id="tip-3">✓ 응원가를 여러 번 반복하면 빠르게 향상됩니다.</li>
+        </ul>
+      </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer class="bg-gray-800 text-white mt-12">
+      <div class="max-w-6xl mx-auto px-4 py-6 text-center text-gray-400 text-sm">
+        <p>💙 Blue Wings Forever! ⚪</p>
+      </div>
+    </footer>
+
+    <script type="module" src="../js/results.js"></script>
+  </body>
+</html>

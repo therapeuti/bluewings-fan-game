@@ -1,0 +1,334 @@
+/* ==================== 게임 공통 스타일 ==================== */
+
+.game-container {
+  @apply max-w-4xl mx-auto;
+}
+
+.game-header {
+  @apply bg-gradient-to-r from-bluewings-primary to-bluewings-dark text-white shadow-lg;
+}
+
+.game-main {
+  @apply max-w-4xl mx-auto px-4 py-12;
+}
+
+/* ==================== 게임 통계 바 ==================== */
+
+.game-stats-bar {
+  @apply bg-white rounded-lg shadow-md p-6 mb-8;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.stat-item {
+  @apply text-center;
+}
+
+.stat-item-label {
+  @apply text-gray-600 text-sm mb-1;
+}
+
+.stat-item-value {
+  @apply text-2xl font-bold text-bluewings-primary;
+}
+
+/* ==================== 진행 상황 바 ==================== */
+
+.game-progress-section {
+  @apply bg-white rounded-lg shadow-md p-6 mb-8;
+}
+
+.game-progress-bar {
+  @apply w-full bg-gray-200 rounded-full h-3 overflow-hidden;
+}
+
+.game-progress-fill {
+  @apply bg-gradient-to-r from-bluewings-primary to-blue-500 h-full rounded-full transition-all duration-500;
+  box-shadow: 0 0 10px rgba(0, 82, 204, 0.3);
+}
+
+/* ==================== 게임 영역 ==================== */
+
+.game-area {
+  @apply bg-white rounded-lg shadow-md p-8 mb-8;
+}
+
+.game-area-title {
+  @apply text-gray-600 text-sm mb-4 font-bold;
+}
+
+/* ==================== 타자 연습 게임 ==================== */
+
+.typing-target {
+  @apply text-2xl font-mono leading-relaxed p-6 bg-gray-50 rounded-lg border-2 border-gray-200;
+}
+
+.typing-comparison {
+  @apply text-lg font-mono p-4 bg-gray-50 rounded-lg min-h-16;
+}
+
+.typing-char {
+  display: inline-block;
+  padding: 0 2px;
+  border-radius: 2px;
+  transition: all 0.1s ease;
+}
+
+.typing-char.correct {
+  @apply text-green-600 bg-green-100;
+}
+
+.typing-char.incorrect {
+  @apply text-red-600 bg-red-100;
+}
+
+.typing-char.extra {
+  @apply text-red-600 bg-red-200 line-through;
+}
+
+.typing-input-field {
+  @apply w-full h-32 p-4 border-2 border-gray-200 rounded-lg font-mono text-base focus:outline-none focus:border-bluewings-primary transition-colors;
+}
+
+/* ==================== 블랭크 맞히기 게임 ==================== */
+
+.blank-question {
+  @apply text-2xl leading-relaxed p-6 bg-gray-50 rounded-lg border-2 border-gray-200 font-bold;
+}
+
+.blank-word {
+  @apply inline-block px-4 py-2 bg-yellow-200 rounded font-bold text-yellow-800;
+  min-width: 80px;
+  text-align: center;
+}
+
+.options-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 gap-4;
+}
+
+.option-button {
+  @apply w-full p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-bluewings-primary hover:bg-blue-50 transition-all duration-200 cursor-pointer font-bold text-gray-800;
+}
+
+.option-button:active {
+  transform: scale(0.98);
+}
+
+.option-button.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.option-button.correct {
+  @apply border-green-500 bg-green-100 text-green-700 animate-pulse;
+}
+
+.option-button.incorrect {
+  @apply border-red-500 bg-red-100 text-red-700;
+}
+
+/* ==================== 제목 맞히기 게임 ==================== */
+
+.title-lyric {
+  @apply text-2xl leading-relaxed p-6 bg-blue-50 rounded-lg border-2 border-bluewings-primary;
+}
+
+.title-options {
+  @apply grid grid-cols-1 gap-4;
+}
+
+.title-option-button {
+  @apply w-full p-4 border-2 border-gray-300 rounded-lg bg-white hover:border-bluewings-primary hover:bg-blue-50 transition-all duration-200 cursor-pointer font-bold text-gray-800 text-left;
+}
+
+.title-option-button:active {
+  transform: scale(0.98);
+}
+
+.title-option-button.correct {
+  @apply border-green-500 bg-green-100 text-green-700;
+}
+
+.title-option-button.incorrect {
+  @apply border-red-500 bg-red-100 text-red-700;
+}
+
+/* ==================== 피드백 메시지 ==================== */
+
+.feedback-message {
+  @apply p-4 rounded-lg text-center font-bold text-lg mb-4;
+}
+
+.feedback-correct {
+  @apply bg-green-100 text-green-700 border-2 border-green-500;
+}
+
+.feedback-incorrect {
+  @apply bg-red-100 text-red-700 border-2 border-red-500;
+}
+
+.feedback-message.hidden {
+  display: none;
+}
+
+/* ==================== 버튼 그룹 ==================== */
+
+.button-group {
+  @apply flex gap-4 justify-center mb-8;
+}
+
+.button-group.vertical {
+  @apply flex-col;
+}
+
+.button-group-item {
+  @apply flex-1;
+}
+
+/* ==================== 게임 오버레이 ==================== */
+
+.game-overlay {
+  @apply fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50;
+}
+
+.game-modal {
+  @apply bg-white rounded-lg shadow-xl p-8 max-w-md w-full mx-4 animate-bounce;
+}
+
+.game-modal-title {
+  @apply text-2xl font-bold text-gray-800 mb-4;
+}
+
+.game-modal-message {
+  @apply text-gray-600 mb-6;
+}
+
+/* ==================== 로딩 상태 ==================== */
+
+.loading-spinner {
+  @apply inline-block w-8 h-8 border-4 border-gray-300 border-t-bluewings-primary rounded-full;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==================== 제한 시간 표시 ==================== */
+
+.time-limit-warning {
+  @apply text-red-600 font-bold;
+  animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.time-limit-critical {
+  @apply bg-red-100 border-2 border-red-500 text-red-700;
+  animation: shake 0.5s ease-in-out infinite;
+}
+
+/* ==================== 키보드 입력 시각화 ==================== */
+
+.keyboard-hint {
+  @apply text-xs text-gray-500 mt-2 italic;
+}
+
+.key-badge {
+  @apply inline-block bg-gray-200 px-2 py-1 rounded border border-gray-400 font-mono text-sm;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+}
+
+/* ==================== 성과 배지 ==================== */
+
+.achievement-badge {
+  @apply inline-block px-4 py-2 rounded-full font-bold text-sm;
+}
+
+.achievement-gold {
+  @apply bg-yellow-200 text-yellow-800;
+}
+
+.achievement-silver {
+  @apply bg-gray-300 text-gray-800;
+}
+
+.achievement-bronze {
+  @apply bg-orange-200 text-orange-800;
+}
+
+.achievement-star {
+  @apply bg-blue-100 text-bluewings-primary;
+}
+
+/* ==================== 점수 표시 ==================== */
+
+.score-display {
+  @apply text-5xl font-bold text-bluewings-primary;
+}
+
+.score-label {
+  @apply text-gray-600 text-sm;
+}
+
+/* ==================== 반응형 게임 ==================== */
+
+@media (max-width: 768px) {
+  .game-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+
+  .stat-item-value {
+    font-size: 1.5rem;
+  }
+
+  .typing-target,
+  .blank-question,
+  .title-lyric {
+    font-size: 1.25rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .game-area {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .game-stats-bar {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+  }
+
+  .stat-item-value {
+    font-size: 1.25rem;
+  }
+
+  .typing-target,
+  .blank-question,
+  .title-lyric {
+    font-size: 1rem;
+    padding: 1rem;
+  }
+
+  .button-group {
+    flex-direction: column;
+  }
+
+  .button-group-item {
+    width: 100%;
+  }
+
+  .game-modal {
+    margin: 1rem;
+    max-width: 100%;
+  }
+
+  .typing-input-field {
+    height: 24vh;
+  }
+}

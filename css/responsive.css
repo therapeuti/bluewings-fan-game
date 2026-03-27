@@ -1,0 +1,352 @@
+/* ==================== 반응형 그리드 ==================== */
+
+/* 초대형 화면 (xxl) - 1536px 이상 */
+@media (min-width: 1536px) {
+  .container-max {
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+
+  .grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+}
+
+/* 큰 화면 (lg) - 1024px 이상 */
+@media (min-width: 1024px) {
+  .text-heading-lg {
+    font-size: 3rem;
+    line-height: 1;
+  }
+
+  .p-lg {
+    padding: 2rem;
+  }
+}
+
+/* 중간 화면 (md) - 768px 이상 */
+@media (min-width: 768px) {
+  .grid-md-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .grid-md-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .flex-md-row {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .p-md {
+    padding: 1.5rem;
+  }
+
+  .text-md {
+    font-size: 1rem;
+  }
+
+  .w-md-50 {
+    width: 50%;
+  }
+}
+
+/* 작은 화면 (sm) - 640px 이상 */
+@media (min-width: 640px) {
+  .p-sm {
+    padding: 1rem;
+  }
+
+  .text-sm-lg {
+    font-size: 1.125rem;
+  }
+}
+
+/* 모바일 (xs) - 640px 미만 */
+@media (max-width: 639px) {
+  body {
+    font-size: 14px;
+  }
+
+  main {
+    padding: 0.5rem;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+
+  h2 {
+    font-size: 1.25rem;
+  }
+
+  h3 {
+    font-size: 1rem;
+  }
+
+  .grid-1 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .flex-col-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .gap-mobile {
+    gap: 0.75rem;
+  }
+
+  .p-mobile {
+    padding: 0.5rem;
+  }
+
+  .text-mobile {
+    font-size: 0.875rem;
+  }
+
+  /* 게임 페이지 모바일 최적화 */
+  .game-stats-bar {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+  }
+
+  .stat-item-value {
+    font-size: 1.25rem;
+  }
+
+  .typing-input-field {
+    height: 20vh;
+    font-size: 14px;
+  }
+
+  textarea {
+    font-size: 16px; /* iOS 자동 줌 방지 */
+  }
+
+  .button-group {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    padding: 0.75rem;
+  }
+
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .option-button,
+  .title-option-button {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+/* ==================== 터치 장치 최적화 ==================== */
+
+@media (hover: none) and (pointer: coarse) {
+  /* 터치 장치에서 버튼 크기 증가 */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .option-button,
+  .title-option-button {
+    min-height: 50px;
+  }
+
+  /* 터치 장치에서 호버 효과 제거 */
+  button:hover {
+    /* 특별한 호버 효과 제거 */
+  }
+
+  /* 탭 표시 강조 */
+  button:focus-visible {
+    outline: 3px solid #0052cc;
+    outline-offset: 2px;
+  }
+}
+
+/* ==================== 프린트 최적화 ==================== */
+
+@media print {
+  header,
+  footer,
+  .no-print,
+  button,
+  .ad,
+  nav {
+    display: none !important;
+  }
+
+  body {
+    background-color: white;
+    margin: 0;
+    padding: 0;
+  }
+
+  main {
+    padding: 0;
+  }
+
+  .card {
+    page-break-inside: avoid;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  a::after {
+    content: ' (' attr(href) ')';
+  }
+}
+
+/* ==================== 접근성 - 포커스 관리 ==================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==================== 다크모드 감지 ==================== */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: #1a1a1a;
+    color: #e0e0e0;
+  }
+
+  .card,
+  .game-area {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+  }
+
+  header {
+    background: linear-gradient(135deg, #003366 0%, #002244 100%);
+  }
+
+  .text-gray-800 {
+    color: #e0e0e0;
+  }
+
+  .text-gray-600 {
+    color: #b0b0b0;
+  }
+
+  .bg-gray-50,
+  .bg-blue-50,
+  .bg-yellow-50 {
+    background-color: #333333;
+  }
+
+  input,
+  textarea,
+  select {
+    background-color: #2a2a2a;
+    color: #e0e0e0;
+    border-color: #444444;
+  }
+
+  input:focus,
+  textarea:focus,
+  select:focus {
+    border-color: #0052cc;
+  }
+}
+
+/* ==================== 고대비 모드 ==================== */
+
+@media (prefers-contrast: more) {
+  body {
+    font-weight: 500;
+  }
+
+  button {
+    border: 2px solid currentColor;
+  }
+
+  .card {
+    border: 1px solid currentColor;
+  }
+}
+
+/* ==================== 테블릿 가로 (iPad) ==================== */
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  .game-stats-bar {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .grid-md-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .typing-input-field {
+    height: 30vh;
+  }
+}
+
+/* ==================== 아주 좁은 화면 (폴드형 디바이스) ==================== */
+
+@media (max-width: 320px) {
+  body {
+    font-size: 12px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+  }
+
+  .game-stats-bar {
+    grid-template-columns: 1fr;
+    gap: 0.25rem;
+  }
+
+  .button-group {
+    gap: 0.25rem;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .game-area {
+    padding: 0.5rem;
+  }
+
+  .typing-input-field {
+    height: 15vh;
+    font-size: 12px;
+  }
+}

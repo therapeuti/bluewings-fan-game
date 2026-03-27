@@ -1,0 +1,109 @@
+{
+  "questions": [
+    {
+      "id": "typing_001",
+      "content": "나의 사랑 나의 수원",
+      "source": "응원가: 나의 사랑 나의 수원",
+      "difficulty": "easy",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_002",
+      "content": "알레 수원 블루윙",
+      "source": "응원가: 개선행진곡",
+      "difficulty": "easy",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_003",
+      "content": "우리는 수원",
+      "source": "응원가: 우리는 수원",
+      "difficulty": "easy",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_004",
+      "content": "날아가 블루윙",
+      "source": "응원가: 가자 가자 블루윙",
+      "difficulty": "easy",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_005",
+      "content": "Vamos Campeon",
+      "source": "응원가: Vamos Campeon",
+      "difficulty": "easy",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_006",
+      "content": "오오오 오오 오오오오오~ 오오오 오오오 오오오~ 오!",
+      "source": "응원가: 나의 사랑 나의 수원",
+      "difficulty": "medium",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_007",
+      "content": "제도의 푸른 하늘에 청백적의 기를 높여라",
+      "source": "응원가: 제도의 심장부에서",
+      "difficulty": "medium",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_008",
+      "content": "나의 마음에 환희를 또 한 번 더",
+      "source": "응원가: Vamos Campeon",
+      "difficulty": "medium",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_009",
+      "content": "푸른 깃발이 나의 뺨을 스치며 춤춘다",
+      "source": "응원가: 우리는 수원",
+      "difficulty": "medium",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_010",
+      "content": "우리들이 함께 한다면 불가능은 없어",
+      "source": "응원가: 막을 수 없는 이 사랑",
+      "difficulty": "medium",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_011",
+      "content": "수원의 영광된 사람으로 사랑으로 오, 수원 우리의 자랑",
+      "source": "응원가: 우리는 수원",
+      "difficulty": "hard",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_012",
+      "content": "저 하늘 끝으로 날 데려가 La Banda와 저 바다를 넘어 여행을 떠나자",
+      "source": "응원가: Vamos Campeon",
+      "difficulty": "hard",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_013",
+      "content": "너~만이 우리의 가슴을 뛰게 해 이 곳에 있어 프렌테 트리콜로",
+      "source": "응원가: Despacito",
+      "difficulty": "hard",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_014",
+      "content": "자리마다 친구들과 낭만을 태우고 우리들의 캄페온을 일등석에 태우고",
+      "source": "응원가: 막을 수 없는 이 사랑",
+      "difficulty": "hard",
+      "category": "lyric"
+    },
+    {
+      "id": "typing_015",
+      "content": "우리 여기 모여서 수원의 노래를 함께하자 푸른 여행 꿈꾸며",
+      "source": "응원가: Vamos 트리콜로",
+      "difficulty": "hard",
+      "category": "lyric"
+    }
+  ]
+}
