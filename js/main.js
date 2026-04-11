@@ -14,11 +14,13 @@ const state = {
   wordCompletedCount: 0,
   wordTotalCount: 0,
   songTitle: '',
-  songSelection: 'random',
+  songSelection: '',
   inputValue: '',
   currentIndex: 0,
   startTime: null,
   attemptStartTime: null,
+  lastWordCpm: 0,
+  bestWordCpm: 0,
   lastSentenceCpm: 0,
   bestSentenceCpm: 0,
   endTime: null,
@@ -55,14 +57,24 @@ function renderModeList() {
 function renderEmptyState() {
   playPanelEl.innerHTML = `
     <div class="empty-state">
-      <div>
+      <div class="empty-state-content">
         <h2>모드를 선택하면 바로 시작할 수 있습니다.</h2>
-        <p class="empty-copy">
-          단어 연습, 단문 연습, 응원가 연습을 바로 시작할 수 있습니다.
-        </p>
+        <div class="home-mode-grid">
+          ${MODES.map(
+            (mode) => `
+              <button type="button" class="home-mode-button" data-mode-id="${mode.id}">
+                ${escapeHtml(mode.name)}
+              </button>
+            `
+          ).join('')}
+        </div>
       </div>
     </div>
   `;
+
+  playPanelEl.querySelectorAll('[data-mode-id]').forEach((button) => {
+    button.addEventListener('click', () => startMode(button.dataset.modeId));
+  });
 }
 
 function startMode(modeId) {
@@ -87,6 +99,8 @@ function resetState() {
   state.currentIndex = 0;
   state.startTime = null;
   state.attemptStartTime = null;
+  state.lastWordCpm = 0;
+  state.bestWordCpm = 0;
   state.lastSentenceCpm = 0;
   state.bestSentenceCpm = 0;
   state.endTime = null;
@@ -114,7 +128,6 @@ function renderPracticeView() {
               <label class="anthem-select-wrap" for="song-select">
                 <span class="anthem-select-label">응원가 선택</span>
                 <select id="song-select" class="anthem-select">
-                  <option value="random"${state.songSelection === 'random' ? ' selected' : ''}>랜덤 응원가</option>
                   ${content.songs
                     .map(
                       (song) => `
@@ -126,7 +139,7 @@ function renderPracticeView() {
                     .join('')}
                 </select>
               </label>
-              <button type="button" class="button subtle" id="song-random-button">랜덤으로 바꾸기</button>
+              <button type="button" class="button subtle" id="song-random-button">랜덤</button>
             </div>
           `
           : ''
@@ -136,12 +149,12 @@ function renderPracticeView() {
           <span class="status-label">타수/분</span>
           <strong class="status-value">${getLiveCpm()}</strong>
           ${
-            isSentenceMode
+            isWordMode || isSentenceMode
               ? `
                 <p class="status-subtext">
-                  이전 문장 <span id="last-sentence-cpm">${state.lastSentenceCpm}</span>
+                  이전 ${isWordMode ? '단어' : '문장'} <span id="last-attempt-cpm">${isWordMode ? state.lastWordCpm : state.lastSentenceCpm}</span>
                   <br />
-                  최고 <span id="best-sentence-cpm">${state.bestSentenceCpm}</span>
+                  최고 <span id="best-attempt-cpm">${isWordMode ? state.bestWordCpm : state.bestSentenceCpm}</span>
                 </p>
               `
               : ''
@@ -214,15 +227,6 @@ function renderPracticeView() {
     : '';
 
   playPanelEl.innerHTML = `
-    <div class="panel-head">
-      <div>
-        <h2>${mode.name}</h2>
-      </div>
-      <div class="panel-head-actions">
-        <button type="button" class="button primary" id="restart-button">다시 시작</button>
-      </div>
-    </div>
-
     <div class="play-layout">
       ${statusSidebar}
       <div class="practice-panel${isSentenceMode ? ' compact-sentence' : ''}${isParagraphMode ? ' anthem-practice' : ''}">
@@ -263,20 +267,12 @@ function renderPracticeView() {
     </div>
   `;
 
-  document.getElementById('restart-button').addEventListener('click', () => {
-    startMode(state.modeId);
-  });
-
   const inputEl = document.getElementById('typing-input');
   inputEl.value = state.inputValue;
   inputEl.focus();
   inputEl.addEventListener('input', handleInputChange);
 
-  if (isWordMode) {
-    inputEl.addEventListener('keydown', handleWordKeydown);
-  }
-
-  if (isSentenceMode || isParagraphMode) {
+  if (isWordMode || isSentenceMode || isParagraphMode) {
     inputEl.addEventListener('beforeinput', handleLineBeforeInput);
     inputEl.addEventListener('keydown', handleLineKeydown);
   }
@@ -298,7 +294,7 @@ function handleInputChange(event) {
     startSession();
   }
 
-  if (state.modeId === 'sentence' && !state.attemptStartTime && nextValue.length > 0) {
+  if ((state.modeId === 'words' || state.modeId === 'sentence') && !state.attemptStartTime && nextValue.length > 0) {
     state.attemptStartTime = Date.now();
   }
 
@@ -306,15 +302,8 @@ function handleInputChange(event) {
   state.currentIndex = nextValue.length;
   syncLiveMetrics();
 
-  if (state.modeId === 'words') {
-    if (normalizeWord(nextValue) === normalizeWord(state.currentText)) {
-      completeCurrentWord();
-      return;
-    }
-  }
-
   if (
-    (state.modeId === 'sentence' || state.modeId === 'paragraph') &&
+    (state.modeId === 'words' || state.modeId === 'sentence' || state.modeId === 'paragraph') &&
     nextValue.length > state.currentText.length
   ) {
     advanceCurrentLine();
@@ -322,16 +311,6 @@ function handleInputChange(event) {
   }
 
   refreshPracticeView();
-}
-
-function handleWordKeydown(event) {
-  if (event.key !== 'Enter') return;
-
-  event.preventDefault();
-
-  if (normalizeWord(state.inputValue) === normalizeWord(state.currentText)) {
-    completeCurrentWord();
-  }
 }
 
 function handleLineBeforeInput(event) {
@@ -362,11 +341,15 @@ function startSession() {
 }
 
 function completeCurrentWord() {
+  const completedWordCpm = getLiveCpm();
   commitCurrentAttempt();
   state.wordCompletedCount += 1;
   state.wordsCompleted += 1;
   state.inputValue = '';
   state.currentIndex = 0;
+  state.attemptStartTime = null;
+  state.lastWordCpm = completedWordCpm;
+  state.bestWordCpm = Math.max(state.bestWordCpm, completedWordCpm);
 
   if (state.wordCompletedCount >= state.wordTotalCount) {
     finishSession();
@@ -421,6 +404,12 @@ function completeCurrentSongLine() {
 }
 
 function advanceCurrentLine() {
+  if (state.modeId === 'words') {
+    completeCurrentWord();
+    clearTypingInputSoon();
+    return;
+  }
+
   if (state.modeId === 'sentence') {
     completeCurrentSentence();
     clearTypingInputSoon();
@@ -530,8 +519,8 @@ function refreshPracticeView() {
   const timeEl = document.querySelector('.status-grid .status-card:nth-child(3) .status-value');
   const progressEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-value');
   const progressLabelEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-label');
-  const lastSentenceCpmEl = document.getElementById('last-sentence-cpm');
-  const bestSentenceCpmEl = document.getElementById('best-sentence-cpm');
+  const lastAttemptCpmEl = document.getElementById('last-attempt-cpm');
+  const bestAttemptCpmEl = document.getElementById('best-attempt-cpm');
   const feedbackBadgeEl = document.querySelector('.feedback-badge');
   const helperTextEl = document.querySelector('.feedback-line .helper-text');
   const sentenceQueueEl = document.getElementById('sentence-queue');
@@ -562,12 +551,16 @@ function refreshPracticeView() {
     progressLabelEl.textContent = getProgressLabel();
   }
 
-  if (lastSentenceCpmEl) {
-    lastSentenceCpmEl.textContent = String(state.lastSentenceCpm);
+  if (lastAttemptCpmEl) {
+    lastAttemptCpmEl.textContent = String(
+      state.modeId === 'words' ? state.lastWordCpm : state.lastSentenceCpm
+    );
   }
 
-  if (bestSentenceCpmEl) {
-    bestSentenceCpmEl.textContent = String(state.bestSentenceCpm);
+  if (bestAttemptCpmEl) {
+    bestAttemptCpmEl.textContent = String(
+      state.modeId === 'words' ? state.bestWordCpm : state.bestSentenceCpm
+    );
   }
 
   if (feedbackBadgeEl) {
@@ -636,7 +629,7 @@ function initializeSessionTexts(modeId) {
 }
 
 function getLiveCpm() {
-  if (state.modeId === 'sentence') {
+  if (state.modeId === 'words' || state.modeId === 'sentence') {
     if (!state.attemptStartTime) return 0;
     const seconds = Math.max(0.1, (Date.now() - state.attemptStartTime) / 1000);
     return calculateCPM(countTypingUnits(state.inputValue), seconds);
@@ -707,10 +700,6 @@ function clearTimer() {
     window.clearInterval(state.timerId);
     state.timerId = null;
   }
-}
-
-function normalizeWord(value) {
-  return value.trim();
 }
 
 function clearTypingInputSoon() {
@@ -806,11 +795,9 @@ function handleSongSelectionChange(event) {
 }
 
 function initializeSongSession() {
-  const song = state.songSelection === 'random'
-    ? sample(content.songs)
-    : content.songs.find((item) => item.title === state.songSelection) || sample(content.songs);
+  const song = content.songs.find((item) => item.title === state.songSelection) || sample(content.songs);
 
-  state.songSelection = state.songSelection === 'random' ? 'random' : song.title;
+  state.songSelection = song.title;
   state.songTitle = song.title;
   state.completedTexts = [];
   state.sessionTexts = [...song.entries];
@@ -824,10 +811,16 @@ function initializeSongSession() {
 function restartSongPractice(selection) {
   resetState();
   state.modeId = 'paragraph';
-  state.songSelection = selection;
+  state.songSelection = selection || getRandomSongTitle(state.songSelection);
   initializeSongSession();
   renderModeList();
   renderPracticeView();
+}
+
+function getRandomSongTitle(excludeTitle = '') {
+  const candidates = content.songs.filter((song) => song.title !== excludeTitle);
+  const pool = candidates.length > 0 ? candidates : content.songs;
+  return sample(pool).title;
 }
 
 function getCurrentInputStats() {
