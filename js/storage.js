@@ -45,6 +45,7 @@ export function saveGameResult(result) {
   }
 
   data.userStats.totalGamesPlayed++;
+  data.userStats.totalPlayTime += result.elapsedTime || 0;
   data.userStats.lastPlayedDate = new Date().toISOString();
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

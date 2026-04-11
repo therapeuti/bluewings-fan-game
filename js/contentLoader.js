@@ -1,65 +1,67 @@
-/**
- * 콘텐츠 로더 모듈
- */
+import sentenceSource from '../sentence-list.md?raw';
+import wordSource from '../word-list.md?raw';
+import songSource from '../song-list.md?raw';
 
-export async function loadContent(filePath) {
-  try {
-    const response = await fetch(filePath);
-    if (!response.ok) {
-      throw new Error('Failed to load ' + filePath);
-    }
-    return await response.json();
-  } catch (error) {
-    console.error('Content loading error:', error);
-    return null;
-  }
+function parseMarkdownLines(source) {
+  return source
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => line.replace(/^-\s*/, ''))
+    .filter(Boolean);
 }
 
-export async function loadAllContent() {
-  const [songs, players, staff, typing, blanks, titles] = await Promise.all([
-    loadContent('./data/songs.json'),
-    loadContent('./data/players.json'),
-    loadContent('./data/staff.json'),
-    loadContent('./data/typing-questions.json'),
-    loadContent('./data/blank-questions.json'),
-    loadContent('./data/title-questions.json'),
-  ]);
+function parseSongs(source) {
+  const songs = [];
+  let currentSong = null;
+
+  source.split('\n').forEach((rawLine) => {
+    const line = rawLine.trim();
+
+    if (!line) {
+      return;
+    }
+
+    if (line.startsWith('#')) {
+      if (currentSong && currentSong.lines.length) {
+        songs.push(currentSong);
+      }
+
+      currentSong = {
+        title: line.replace(/^#+\s*/, '').trim(),
+        lines: [],
+      };
+      return;
+    }
+
+    if (!currentSong) {
+      return;
+    }
+
+    currentSong.lines.push(line);
+  });
+
+  if (currentSong && currentSong.lines.length) {
+    songs.push(currentSong);
+  }
+
+  return songs.map((song) => ({
+    ...song,
+    entries: [
+      { text: song.title, type: 'title' },
+      ...song.lines.map((text) => ({ text, type: 'lyric' })),
+    ],
+  }));
+}
+
+export function loadPracticeContent() {
+  const words = parseMarkdownLines(wordSource);
+  const sentences = parseMarkdownLines(sentenceSource);
+  const songs = parseSongs(songSource);
 
   return {
-    songs: songs?.songs || [],
-    players: players?.players || [],
-    staff: staff?.staff || [],
-    typingQuestions: typing?.questions || [],
-    blankQuestions: blanks?.questions || [],
-    titleQuestions: titles?.questions || [],
+    words,
+    sentences,
+    songs,
   };
 }
-
-export function getQuestionsByDifficulty(questions, difficulty, count) {
-  const filtered = questions.filter((q) => q.difficulty === difficulty);
-  return filtered.slice(0, count);
-}
-
-class ContentCache {
-  constructor() {
-    this.cache = new Map();
-  }
-
-  set(key, value) {
-    this.cache.set(key, value);
-  }
-
-  get(key) {
-    return this.cache.get(key);
-  }
-
-  has(key) {
-    return this.cache.has(key);
-  }
-
-  clear() {
-    this.cache.clear();
-  }
-}
-
-export const contentCache = new ContentCache();

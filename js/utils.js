@@ -3,15 +3,23 @@
  */
 
 /**
- * 두 문자열을 비교하여 정확도를 반환
+ * 정확도 계산
+ * 문자열 비교 또는 숫자 기반 계산 모두 지원
  */
-export function calculateAccuracy(typed, original) {
+export function calculateAccuracy(correctOrTyped, totalOrOriginal) {
+  if (typeof correctOrTyped === 'number' && typeof totalOrOriginal === 'number') {
+    if (totalOrOriginal === 0) return 100;
+    return Math.round((correctOrTyped / totalOrOriginal) * 100);
+  }
+
+  const typed = String(correctOrTyped);
+  const original = String(totalOrOriginal);
   const minLength = Math.min(typed.length, original.length);
   let correctCount = 0;
 
-  for (let i = 0; i < minLength; i++) {
+  for (let i = 0; i < minLength; i += 1) {
     if (typed[i] === original[i]) {
-      correctCount++;
+      correctCount += 1;
     }
   }
 

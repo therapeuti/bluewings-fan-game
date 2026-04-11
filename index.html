@@ -1,166 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="수원삼성블루윙즈 팬을 위한 인터랙티브 게임 애플리케이션" />
-    <meta name="theme-color" content="#0052CC" />
-    <title>블루윙스 팬 게임 - 수원삼성블루윙즈</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>" />
-    <link rel="stylesheet" href="css/style.css" />
+    <meta name="description" content="단어, 단문, 장문 모드를 지원하는 타자 연습 게임" />
+    <title>타자 연습 게임</title>
+    <link rel="stylesheet" href="./css/style.css" />
   </head>
-  <body class="bg-gray-50">
-    <!-- 헤더 -->
-    <header class="bg-gradient-to-r from-bluewings-primary to-bluewings-dark text-white shadow-lg">
-      <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <div class="text-4xl">💙</div>
-            <div>
-              <h1 class="text-3xl font-bold">블루윙스 팬 게임</h1>
-              <p class="text-blue-100 text-sm">수원삼성블루윙즈와 함께하는 즐거운 시간</p>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div class="header-top">
+          <div>
+            <p class="eyebrow">Bluewings Typing</p>
+            <h1>수원 삼성 블루윙즈 응원가 타자연습</h1>
+          </div>
+          <div class="header-accent" aria-hidden="true">
+            <span class="accent-blue"></span>
+            <span class="accent-white"></span>
+            <span class="accent-red"></span>
+          </div>
+        </div>
+        <div class="header-mode-bar">
+          <div id="mode-list" class="mode-list"></div>
+        </div>
+      </header>
+
+      <main class="app-main">
+        <section id="play-panel" class="play-panel" aria-live="polite"></section>
+      </main>
+
+      <footer class="app-footer">
+        <div class="footer-grid">
+          <section class="footer-block">
+            <div class="footer-heading">
+              <span class="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3l2.4 4.86 5.36.78-3.88 3.78.92 5.33L12 15.7l-4.8 2.52.92-5.33-3.88-3.78 5.36-.78L12 3z" />
+                </svg>
+              </span>
+              <h2>블루윙즈 타자연습</h2>
             </div>
-          </div>
-          <button
-            id="reset-records-btn"
-            class="bg-white bg-opacity-20 hover:bg-opacity-30 text-white px-4 py-2 rounded-lg transition-all duration-200 text-sm font-medium"
-            title="모든 게임 기록 초기화"
-          >
-            🔄 기록 초기화
-          </button>
-        </div>
-      </div>
-    </header>
-
-    <!-- 메인 콘텐츠 -->
-    <main class="max-w-6xl mx-auto px-4 py-12">
-      <!-- 소개 섹션 -->
-      <section class="mb-12">
-        <div class="bg-white rounded-lg shadow-md p-8 border-l-4 border-bluewings-primary">
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">🎮 게임을 선택하세요</h2>
-          <p class="text-gray-600 mb-4">
-            수원삼성블루윙즈의 응원가, 선수 이름, 코칭스태프 정보로 즐기는 세 가지 게임!
-            타자 연습부터 응원가 퀴즈까지, 팬으로서의 지식을 테스트해보세요.
-          </p>
-          <div class="flex gap-2 flex-wrap">
-            <span class="inline-block bg-blue-100 text-bluewings-primary px-3 py-1 rounded-full text-sm font-medium">
-              📝 타이핑
-            </span>
-            <span class="inline-block bg-blue-100 text-bluewings-primary px-3 py-1 rounded-full text-sm font-medium">
-              ✏️ 퀴즈
-            </span>
-            <span class="inline-block bg-blue-100 text-bluewings-primary px-3 py-1 rounded-full text-sm font-medium">
-              🎵 음악
-            </span>
-          </div>
-        </div>
-      </section>
-
-      <!-- 게임 카드 그리드 -->
-      <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12" id="games-container">
-        <!-- 게임 카드들이 JavaScript로 생성됩니다 -->
-        <div class="animate-pulse">
-          <div class="bg-gray-200 h-64 rounded-lg"></div>
-        </div>
-        <div class="animate-pulse">
-          <div class="bg-gray-200 h-64 rounded-lg"></div>
-        </div>
-        <div class="animate-pulse">
-          <div class="bg-gray-200 h-64 rounded-lg"></div>
-        </div>
-      </section>
-
-      <!-- 통계 섹션 -->
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-        <div id="stats-total-games" class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="text-4xl font-bold text-bluewings-primary mb-2">0</div>
-          <p class="text-gray-600">플레이한 게임</p>
-        </div>
-        <div id="stats-play-time" class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="text-4xl font-bold text-bluewings-primary mb-2">0분</div>
-          <p class="text-gray-600">총 플레이 시간</p>
-        </div>
-        <div id="stats-last-played" class="bg-white rounded-lg shadow-md p-6 text-center">
-          <div class="text-lg font-bold text-bluewings-primary mb-2">-</div>
-          <p class="text-gray-600">마지막 플레이</p>
-        </div>
-      </section>
-
-      <!-- 안내 정보 -->
-      <section class="bg-blue-50 border border-blue-200 rounded-lg p-8 mb-12">
-        <h3 class="text-xl font-bold text-gray-800 mb-4">💡 게임 방법</h3>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div>
-            <h4 class="font-bold text-bluewings-primary mb-2">⌨️ 타자 연습</h4>
-            <p class="text-gray-700 text-sm">
-              응원가 가사와 선수 이름을 정확하게 타이핑하는 게임입니다.
-              타자 속도와 정확도를 동시에 향상시킬 수 있습니다.
+            <p>
+              수원삼성블루윙즈 응원가와 문장을 더 빠르고 정확하게 익힐 수 있도록 만든 연습 공간입니다.
             </p>
-          </div>
-          <div>
-            <h4 class="font-bold text-bluewings-primary mb-2">✏️ 블랭크 맞히기</h4>
-            <p class="text-gray-700 text-sm">
-              응원가 가사의 일부를 가리고 빈 자리를 채우는 게임입니다.
-              응원가에 대한 이해도를 높일 수 있습니다.
-            </p>
-          </div>
-          <div>
-            <h4 class="font-bold text-bluewings-primary mb-2">🎵 제목 맞히기</h4>
-            <p class="text-gray-700 text-sm">
-              응원가의 구절을 보고 그 응원곡의 제목을 맞히는 게임입니다.
-              응원가 지식을 테스트해보세요!
-            </p>
-          </div>
-        </div>
-      </section>
+          </section>
 
-      <!-- 팁 섹션 -->
-      <section class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-12">
-        <h3 class="font-bold text-gray-800 mb-3">⭐ 팁</h3>
-        <ul class="text-gray-700 text-sm space-y-2">
-          <li>✓ 각 게임은 3가지 난이도(쉬움, 보통, 어려움)로 제공됩니다.</li>
-          <li>✓ 모든 기록은 브라우저에 저장되므로 개인정보 걱정이 없습니다.</li>
-          <li>✓ 난이도가 높을수록 더 많은 점수를 획득할 수 있습니다.</li>
-          <li>✓ 정확도가 높을수록, 빠를수록 보너스 점수를 받습니다.</li>
-        </ul>
-      </section>
-    </main>
-
-    <!-- 푸터 -->
-    <footer class="bg-gray-800 text-white mt-12">
-      <div class="max-w-6xl mx-auto px-4 py-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-          <div>
-            <h4 class="font-bold mb-3">💙 블루윙스 팬 게임</h4>
-            <p class="text-gray-400 text-sm">
-              수원삼성블루윙즈 팬들을 위한 즐거운 게임 플랫폼
-            </p>
-          </div>
-          <div>
-            <h4 class="font-bold mb-3">📞 정보</h4>
-            <ul class="text-gray-400 text-sm space-y-1">
-              <li><a href="#" class="hover:text-white transition">GitHub</a></li>
-              <li><a href="#" class="hover:text-white transition">피드백</a></li>
-              <li><a href="#" class="hover:text-white transition">버그 신고</a></li>
+          <section class="footer-block">
+            <div class="footer-heading">
+              <span class="footer-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 6h16M4 12h16M4 18h10" />
+                </svg>
+              </span>
+              <h2>바로가기</h2>
+            </div>
+            <ul class="footer-links">
+              <li><a href="https://github.com/therapeuti/bluewings-fan-game" target="_blank" rel="noreferrer">GitHub 저장소</a></li>
+              <li><a href="https://www.bluewings.kr/" target="_blank" rel="noreferrer">수원삼성블루윙즈</a></li>
+              <li><a href="https://github.com/therapeuti/bluewings-fan-game/issues" target="_blank" rel="noreferrer">이슈 남기기</a></li>
             </ul>
-          </div>
-          <div>
-            <h4 class="font-bold mb-3">⚖️ 기타</h4>
-            <ul class="text-gray-400 text-sm space-y-1">
-              <li><a href="#" class="hover:text-white transition">개인정보 보호</a></li>
-              <li><a href="#" class="hover:text-white transition">서비스 약관</a></li>
-              <li><a href="#" class="hover:text-white transition">라이선스</a></li>
-            </ul>
-          </div>
+          </section>
         </div>
-        <div class="border-t border-gray-700 pt-8 text-center text-gray-400 text-sm">
-          <p>© 2026 Bluewings Fan Games. All rights reserved.</p>
-          <p class="mt-2">💙 Blue Wings Forever! ⚪</p>
-        </div>
-      </div>
-    </footer>
 
-    <!-- 스크립트 -->
-    <script type="module" src="js/main.js"></script>
+        <div class="footer-bottom">
+          <p>© 2026 Bluewings Fan Game</p>
+          <div class="footer-badges" aria-hidden="true">
+            <span class="badge-blue"></span>
+            <span class="badge-white"></span>
+            <span class="badge-red"></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script type="module" src="./js/main.js"></script>
   </body>
 </html>
