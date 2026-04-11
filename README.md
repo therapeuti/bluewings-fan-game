@@ -1,6 +1,6 @@
 # Bluewings Typing Practice
 
-그랑블루를 위한 수원 응원가 타자 연습 프로젝트입니다.  
+[그랑블루를 위한 수원 응원가 타자 연습 프로젝트](https://therapeuti.github.io/bluewings-fan-game/)입니다.  
 
 새로 산 키보드 테스트도 하고 응원가도 외우려고 만들었습니다.  
 
