@@ -41,6 +41,13 @@ npm run build
 npm run preview
 ```
 
+## GitHub Pages 배포
+
+- 이 저장소는 `main` 브랜치에 푸시하면 GitHub Actions로 자동 배포되도록 설정되어 있습니다.
+- GitHub 저장소의 `Settings > Pages`에서 `Build and deployment`를 `GitHub Actions`로 선택하면 됩니다.
+- Vite `base` 경로는 GitHub Actions에서 자동으로 저장소명(`/bluewings-fan-game/`)에 맞춰 설정됩니다.
+- 배포 주소는 보통 `https://therapeuti.github.io/bluewings-fan-game/` 입니다.
+
 ## 기술 스택
 
 - Vite
@@ -108,7 +115,7 @@ bluewings-fan-game/
 ## 응원가 연습 동작 방식
 
 - 사이드바 상단에서 응원가를 직접 선택할 수 있습니다.
-- `랜덤 응원가`를 선택하거나 랜덤 버튼으로 다른 응원가를 바로 시작할 수 있습니다.
+- `랜덤` 버튼으로 다른 응원가를 바로 시작할 수 있습니다.
 - 제목부터 가사까지 한 줄씩 순서대로 입력합니다.
 - 현재 줄과 입력칸 위치는 고정되고, 지난 줄과 다음 줄만 이동합니다.
 - 완료된 줄은 사용자가 실제로 입력한 문장을 기준으로 보여주며, 틀린 글자는 표시됩니다.
