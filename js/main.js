@@ -135,6 +135,17 @@ function renderPracticeView() {
         <div class="status-card">
           <span class="status-label">타수/분</span>
           <strong class="status-value">${getLiveCpm()}</strong>
+          ${
+            isSentenceMode
+              ? `
+                <p class="status-subtext">
+                  이전 문장 <span id="last-sentence-cpm">${state.lastSentenceCpm}</span>
+                  <br />
+                  최고 <span id="best-sentence-cpm">${state.bestSentenceCpm}</span>
+                </p>
+              `
+              : ''
+          }
         </div>
         <div class="status-card">
           <span class="status-label">정확도</span>
@@ -149,22 +160,6 @@ function renderPracticeView() {
           <strong class="status-value">${getProgressValue()}</strong>
         </div>
       </div>
-      ${
-        isSentenceMode
-          ? `
-            <div class="status-grid status-grid-sidebar status-grid-secondary">
-              <div class="status-card">
-                <span class="status-label">이전 문장 타수</span>
-                <strong class="status-value" id="last-sentence-cpm">${state.lastSentenceCpm}</strong>
-              </div>
-              <div class="status-card">
-                <span class="status-label">최고 타수</span>
-                <strong class="status-value" id="best-sentence-cpm">${state.bestSentenceCpm}</strong>
-              </div>
-            </div>
-          `
-          : ''
-      }
     </aside>
   `;
   const compactSentenceBlock = isSentenceMode
@@ -643,7 +638,7 @@ function initializeSessionTexts(modeId) {
 function getLiveCpm() {
   if (state.modeId === 'sentence') {
     if (!state.attemptStartTime) return 0;
-    const seconds = Math.max(1, Math.round((Date.now() - state.attemptStartTime) / 1000));
+    const seconds = Math.max(0.1, (Date.now() - state.attemptStartTime) / 1000);
     return calculateCPM(countTypingUnits(state.inputValue), seconds);
   }
 

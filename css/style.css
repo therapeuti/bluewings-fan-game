@@ -297,6 +297,18 @@ button {
   line-height: 1;
 }
 
+.status-subtext {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.status-subtext span {
+  font-weight: 700;
+  color: var(--text);
+}
+
 .practice-panel {
   display: grid;
   gap: 18px;
