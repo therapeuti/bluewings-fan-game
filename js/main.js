@@ -1,6 +1,6 @@
 import { MODES, SENTENCE_ROUND_COUNT, WORD_ROUND_COUNT } from './config.js';
 import { loadPracticeContent } from './contentLoader.js';
-import { calculateAccuracy, calculateWPM, formatTime } from './utils.js';
+import { calculateAccuracy, calculateCPM, countTypingUnits, formatTime } from './utils.js';
 
 const content = loadPracticeContent();
 
@@ -18,8 +18,12 @@ const state = {
   inputValue: '',
   currentIndex: 0,
   startTime: null,
+  attemptStartTime: null,
+  lastSentenceCpm: 0,
+  bestSentenceCpm: 0,
   endTime: null,
   committedTypedChars: 0,
+  committedTypedUnits: 0,
   committedTargetChars: 0,
   committedErrorChars: 0,
   errorCount: 0,
@@ -82,8 +86,12 @@ function resetState() {
   state.inputValue = '';
   state.currentIndex = 0;
   state.startTime = null;
+  state.attemptStartTime = null;
+  state.lastSentenceCpm = 0;
+  state.bestSentenceCpm = 0;
   state.endTime = null;
   state.committedTypedChars = 0;
+  state.committedTypedUnits = 0;
   state.committedTargetChars = 0;
   state.committedErrorChars = 0;
   state.errorCount = 0;
@@ -125,8 +133,8 @@ function renderPracticeView() {
       }
       <div class="status-grid status-grid-sidebar">
         <div class="status-card">
-          <span class="status-label">WPM</span>
-          <strong class="status-value">${getLiveWpm()}</strong>
+          <span class="status-label">타수/분</span>
+          <strong class="status-value">${getLiveCpm()}</strong>
         </div>
         <div class="status-card">
           <span class="status-label">정확도</span>
@@ -141,6 +149,22 @@ function renderPracticeView() {
           <strong class="status-value">${getProgressValue()}</strong>
         </div>
       </div>
+      ${
+        isSentenceMode
+          ? `
+            <div class="status-grid status-grid-sidebar status-grid-secondary">
+              <div class="status-card">
+                <span class="status-label">이전 문장 타수</span>
+                <strong class="status-value" id="last-sentence-cpm">${state.lastSentenceCpm}</strong>
+              </div>
+              <div class="status-card">
+                <span class="status-label">최고 타수</span>
+                <strong class="status-value" id="best-sentence-cpm">${state.bestSentenceCpm}</strong>
+              </div>
+            </div>
+          `
+          : ''
+      }
     </aside>
   `;
   const compactSentenceBlock = isSentenceMode
@@ -279,6 +303,10 @@ function handleInputChange(event) {
     startSession();
   }
 
+  if (state.modeId === 'sentence' && !state.attemptStartTime && nextValue.length > 0) {
+    state.attemptStartTime = Date.now();
+  }
+
   state.inputValue = nextValue;
   state.currentIndex = nextValue.length;
   syncLiveMetrics();
@@ -356,10 +384,14 @@ function completeCurrentWord() {
 }
 
 function completeCurrentSentence() {
+  const completedSentenceCpm = getLiveCpm();
   commitCurrentAttempt();
   state.sentenceCompletedCount += 1;
   state.inputValue = '';
   state.currentIndex = 0;
+  state.attemptStartTime = null;
+  state.lastSentenceCpm = completedSentenceCpm;
+  state.bestSentenceCpm = Math.max(state.bestSentenceCpm, completedSentenceCpm);
 
   if (state.sentenceCompletedCount >= state.sentenceTotalCount) {
     finishSession();
@@ -424,11 +456,12 @@ function finishSession() {
           Math.max(totalTypedChars - totalErrorChars, 0),
           Math.max(totalTypedChars, 1)
         );
-  const wpm = calculateWPM(totalTypedChars, elapsedSeconds);
+  const totalTypedUnits = state.committedTypedUnits + countTypingUnits(state.inputValue);
+  const cpm = calculateCPM(totalTypedUnits, elapsedSeconds);
 
   state.result = {
     modeName: getCurrentMode().name,
-    wpm,
+    cpm,
     accuracy,
     elapsedSeconds,
     errorCount: totalErrorChars,
@@ -441,7 +474,7 @@ function finishSession() {
 }
 
 function renderResultsView() {
-  const { modeName, wpm, accuracy, elapsedSeconds, errorCount, wordsCompleted, totalTypedChars } = state.result;
+  const { modeName, cpm, accuracy, elapsedSeconds, errorCount, wordsCompleted, totalTypedChars } = state.result;
 
   playPanelEl.innerHTML = `
     <div class="results-head">
@@ -451,8 +484,8 @@ function renderResultsView() {
 
     <div class="results-grid">
       <div class="results-card">
-        <span class="results-label">WPM</span>
-        <strong class="results-value">${wpm}</strong>
+        <span class="results-label">타수/분</span>
+        <strong class="results-value">${cpm}</strong>
       </div>
       <div class="results-card">
         <span class="results-label">정확도</span>
@@ -497,11 +530,13 @@ function renderTargetText() {
 
 function refreshPracticeView() {
   const targetTextEl = document.getElementById('target-text');
-  const liveWpmEl = document.querySelector('.status-grid .status-card:nth-child(1) .status-value');
+  const liveCpmEl = document.querySelector('.status-grid .status-card:nth-child(1) .status-value');
   const liveAccuracyEl = document.querySelector('.status-grid .status-card:nth-child(2) .status-value');
   const timeEl = document.querySelector('.status-grid .status-card:nth-child(3) .status-value');
   const progressEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-value');
   const progressLabelEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-label');
+  const lastSentenceCpmEl = document.getElementById('last-sentence-cpm');
+  const bestSentenceCpmEl = document.getElementById('best-sentence-cpm');
   const feedbackBadgeEl = document.querySelector('.feedback-badge');
   const helperTextEl = document.querySelector('.feedback-line .helper-text');
   const sentenceQueueEl = document.getElementById('sentence-queue');
@@ -512,8 +547,8 @@ function refreshPracticeView() {
     targetTextEl.innerHTML = renderTargetText();
   }
 
-  if (liveWpmEl) {
-    liveWpmEl.textContent = String(getLiveWpm());
+  if (liveCpmEl) {
+    liveCpmEl.textContent = String(getLiveCpm());
   }
 
   if (liveAccuracyEl) {
@@ -530,6 +565,14 @@ function refreshPracticeView() {
 
   if (progressLabelEl) {
     progressLabelEl.textContent = getProgressLabel();
+  }
+
+  if (lastSentenceCpmEl) {
+    lastSentenceCpmEl.textContent = String(state.lastSentenceCpm);
+  }
+
+  if (bestSentenceCpmEl) {
+    bestSentenceCpmEl.textContent = String(state.bestSentenceCpm);
   }
 
   if (feedbackBadgeEl) {
@@ -597,10 +640,16 @@ function initializeSessionTexts(modeId) {
   initializeSongSession();
 }
 
-function getLiveWpm() {
+function getLiveCpm() {
+  if (state.modeId === 'sentence') {
+    if (!state.attemptStartTime) return 0;
+    const seconds = Math.max(1, Math.round((Date.now() - state.attemptStartTime) / 1000));
+    return calculateCPM(countTypingUnits(state.inputValue), seconds);
+  }
+
   if (!state.startTime) return 0;
   const seconds = Math.max(1, Math.round((Date.now() - state.startTime) / 1000));
-  return calculateWPM(state.totalTypedChars, seconds);
+  return calculateCPM(state.committedTypedUnits + countTypingUnits(state.inputValue), seconds);
 }
 
 function getLiveAccuracy() {
@@ -859,6 +908,7 @@ function calculateParagraphAccuracy() {
 function commitCurrentAttempt() {
   const { typedChars, errorChars } = getCurrentInputStats();
   state.committedTypedChars += typedChars;
+  state.committedTypedUnits += countTypingUnits(state.inputValue);
   state.committedErrorChars += errorChars;
   syncLiveMetrics();
 }

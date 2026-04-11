@@ -28,13 +28,41 @@ export function calculateAccuracy(correctOrTyped, totalOrOriginal) {
 }
 
 /**
- * 타자 속도 (WPM) 계산
+ * 타자 속도 (타수/분) 계산
  */
-export function calculateWPM(correctChars, elapsedSeconds) {
+export function calculateCPM(typedCount, elapsedSeconds) {
   if (elapsedSeconds === 0) return 0;
-  const words = correctChars / 5;
   const minutes = elapsedSeconds / 60;
-  return Math.round(words / minutes);
+  return Math.round(typedCount / minutes);
+}
+
+const HANGUL_SYLLABLE_START = 0xac00;
+const HANGUL_SYLLABLE_END = 0xd7a3;
+
+const CHOSEONG_STROKES = [1, 2, 1, 1, 2, 1, 1, 1, 2, 1, 2, 1, 1, 2, 1, 1, 1, 1, 1];
+const JUNGSEONG_STROKES = [1, 1, 1, 2, 2, 1, 1, 1, 2, 2, 1, 2, 1, 1, 1, 1, 2, 2, 2, 2, 2];
+const JONGSEONG_STROKES = [0, 1, 2, 2, 1, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 1, 1];
+
+export function countTypingUnits(text) {
+  return [...String(text)].reduce((sum, char) => {
+    const code = char.charCodeAt(0);
+
+    if (code < HANGUL_SYLLABLE_START || code > HANGUL_SYLLABLE_END) {
+      return sum + 1;
+    }
+
+    const syllableIndex = code - HANGUL_SYLLABLE_START;
+    const choseongIndex = Math.floor(syllableIndex / 588);
+    const jungseongIndex = Math.floor((syllableIndex % 588) / 28);
+    const jongseongIndex = syllableIndex % 28;
+
+    return (
+      sum +
+      CHOSEONG_STROKES[choseongIndex] +
+      JUNGSEONG_STROKES[jungseongIndex] +
+      JONGSEONG_STROKES[jongseongIndex]
+    );
+  }, 0);
 }
 
 /**
