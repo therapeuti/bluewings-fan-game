@@ -1,6 +1,8 @@
 import { MODES, SENTENCE_ROUND_COUNT, WORD_ROUND_COUNT } from './config.js';
 import { loadPracticeContent } from './contentLoader.js';
 import { calculateAccuracy, calculateCPM, countTypingUnits, formatTime } from './utils.js';
+import { buildSessionResult } from './sessionStats.js';
+import { getModeRecord, saveSessionResult } from './storage.js';
 
 const content = loadPracticeContent();
 
@@ -58,12 +60,16 @@ function renderEmptyState() {
   playPanelEl.innerHTML = `
     <div class="empty-state">
       <div class="empty-state-content">
-        <h2>모드를 선택하면 바로 시작할 수 있습니다.</h2>
+        <p class="home-eyebrow">BLUEWINGS TYPING PRACTICE</p>
+        <h2>수원의 이름으로, 더 빠르고 정확하게.</h2>
+        <p class="home-intro">단어부터 응원가까지 원하는 방식으로 연습하세요.</p>
         <div class="home-mode-grid">
           ${MODES.map(
             (mode) => `
               <button type="button" class="home-mode-button" data-mode-id="${mode.id}">
-                ${escapeHtml(mode.name)}
+                <span class="home-mode-name">${escapeHtml(mode.name)}</span>
+                <span class="home-mode-description">${escapeHtml(mode.description)}</span>
+                <span class="home-mode-meta">${getModeMeta(mode.id)}</span>
               </button>
             `
           ).join('')}
@@ -173,6 +179,10 @@ function renderPracticeView() {
           <strong class="status-value">${getProgressValue()}</strong>
         </div>
       </div>
+      <div class="progress-track" aria-label="연습 진행률">
+        <span class="progress-fill" id="progress-fill" style="width: ${getProgressPercent()}%"></span>
+      </div>
+      <p class="mode-helper">${getModeHelperText()}</p>
     </aside>
   `;
   const compactSentenceBlock = isSentenceMode
@@ -302,11 +312,9 @@ function handleInputChange(event) {
   state.currentIndex = nextValue.length;
   syncLiveMetrics();
 
-  if (
-    (state.modeId === 'words' || state.modeId === 'sentence' || state.modeId === 'paragraph') &&
-    nextValue.length > state.currentText.length
-  ) {
-    advanceCurrentLine();
+  if (state.modeId === 'words' && nextValue === state.currentText) {
+    completeCurrentWord();
+    clearTypingInputSoon();
     return;
   }
 
@@ -314,6 +322,8 @@ function handleInputChange(event) {
 }
 
 function handleLineBeforeInput(event) {
+  if (event.isComposing) return;
+  if (state.modeId === 'words') return;
   if (event.inputType !== 'insertText') return;
   if (event.data !== ' ') return;
   if (state.inputValue.length !== state.currentText.length) return;
@@ -324,8 +334,10 @@ function handleLineBeforeInput(event) {
 }
 
 function handleLineKeydown(event) {
+  if (event.isComposing || event.keyCode === 229) return;
+  if (state.modeId === 'words') return;
   if (event.key !== 'Enter') return;
-  if (state.inputValue.length !== state.currentText.length) return;
+  if (!state.inputValue.length) return;
 
   event.preventDefault();
   event.stopPropagation();
@@ -428,42 +440,37 @@ function finishSession() {
   clearTimer();
   state.endTime = Date.now();
 
-  const { typedChars, errorChars } = getCurrentInputStats();
-  const totalTypedChars = state.committedTypedChars + typedChars;
-  const totalErrorChars = state.committedErrorChars + errorChars;
-
   const elapsedSeconds = Math.max(1, Math.round((state.endTime - state.startTime) / 1000));
-  const accuracy =
-    state.modeId === 'paragraph'
-      ? calculateParagraphAccuracy()
-      : calculateAccuracy(
-          Math.max(totalTypedChars - totalErrorChars, 0),
-          Math.max(totalTypedChars, 1)
-        );
-  const totalTypedUnits = state.committedTypedUnits + countTypingUnits(state.inputValue);
-  const cpm = calculateCPM(totalTypedUnits, elapsedSeconds);
-
-  state.result = {
+  state.result = buildSessionResult({
+    modeId: state.modeId,
     modeName: getCurrentMode().name,
-    cpm,
-    accuracy,
     elapsedSeconds,
-    errorCount: totalErrorChars,
+    committedTypedChars: state.committedTypedChars,
+    committedTypedUnits: state.committedTypedUnits,
+    committedTargetChars: state.committedTargetChars,
+    committedErrorChars: state.committedErrorChars,
     wordsCompleted: state.wordsCompleted,
-    totalTypedChars,
     songTitle: state.songTitle,
-  };
+  });
+
+  state.result.record = saveSessionResult(state.modeId, state.result);
 
   renderResultsView();
 }
 
 function renderResultsView() {
-  const { modeName, cpm, accuracy, elapsedSeconds, errorCount, wordsCompleted, totalTypedChars } = state.result;
+  const { modeName, cpm, accuracy, elapsedSeconds, errorCount, totalTypedChars, record } = state.result;
 
   playPanelEl.innerHTML = `
     <div class="results-head">
+      <span class="result-kicker">PRACTICE COMPLETE</span>
       <h2>결과 리포트</h2>
       <p>${modeName} 플레이가 종료되었습니다.</p>
+    </div>
+
+    <div class="record-banner${record.isPersonalBest ? ' is-best' : ''}">
+      <strong>${record.isPersonalBest ? '새로운 개인 최고 기록!' : '연습 기록이 저장되었습니다.'}</strong>
+      <span>이전 최고 ${record.previousBestCpm} 타/분 · 총 ${record.sessionCount}회 연습</span>
     </div>
 
     <div class="results-grid">
@@ -519,6 +526,7 @@ function refreshPracticeView() {
   const timeEl = document.querySelector('.status-grid .status-card:nth-child(3) .status-value');
   const progressEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-value');
   const progressLabelEl = document.querySelector('.status-grid .status-card:nth-child(4) .status-label');
+  const progressFillEl = document.getElementById('progress-fill');
   const lastAttemptCpmEl = document.getElementById('last-attempt-cpm');
   const bestAttemptCpmEl = document.getElementById('best-attempt-cpm');
   const feedbackBadgeEl = document.querySelector('.feedback-badge');
@@ -549,6 +557,10 @@ function refreshPracticeView() {
 
   if (progressLabelEl) {
     progressLabelEl.textContent = getProgressLabel();
+  }
+
+  if (progressFillEl) {
+    progressFillEl.style.width = `${getProgressPercent()}%`;
   }
 
   if (lastAttemptCpmEl) {
@@ -695,6 +707,28 @@ function getProgressValue() {
   return String(state.errorCount);
 }
 
+function getProgressPercent() {
+  if (state.modeId === 'words') {
+    return state.wordTotalCount ? Math.round((state.wordCompletedCount / state.wordTotalCount) * 100) : 0;
+  }
+  if (state.modeId === 'sentence' || state.modeId === 'paragraph') {
+    return state.sentenceTotalCount ? Math.round((state.sentenceCompletedCount / state.sentenceTotalCount) * 100) : 0;
+  }
+  return 0;
+}
+
+function getModeHelperText() {
+  if (state.modeId === 'words') return '정확히 입력하면 자동으로 다음 단어로 넘어갑니다.';
+  if (state.modeId === 'sentence') return '문장을 입력한 뒤 Enter를 눌러 제출하세요.';
+  return '현재 줄을 입력한 뒤 Enter를 누르면 다음 줄로 이동합니다.';
+}
+
+function getModeMeta(modeId) {
+  const record = getModeRecord(modeId);
+  const roundLabel = modeId === 'words' ? `${WORD_ROUND_COUNT}개 단어` : modeId === 'sentence' ? `${SENTENCE_ROUND_COUNT}개 문장` : '응원가 한 곡';
+  return record.bestCpm ? `${roundLabel} · 최고 ${record.bestCpm} 타/분` : `${roundLabel} · 첫 기록에 도전`;
+}
+
 function clearTimer() {
   if (state.timerId) {
     window.clearInterval(state.timerId);
@@ -723,6 +757,7 @@ function sample(items) {
 }
 
 function sampleMany(items, count) {
+  if (!items.length || count <= 0) return [];
   const shuffled = [...items].sort(() => Math.random() - 0.5);
 
   if (shuffled.length >= count) {
