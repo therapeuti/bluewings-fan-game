@@ -211,6 +211,20 @@ button {
   width: min(100%, 760px);
 }
 
+.home-eyebrow,
+.result-kicker {
+  margin: 0;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.home-intro {
+  margin: -12px 0 4px;
+  color: var(--muted);
+}
+
 .empty-state h2 {
   margin: 0;
   font-size: 32px;
@@ -229,10 +243,34 @@ button {
   border-radius: 22px;
   background: linear-gradient(180deg, #fcfdff 0%, #eef5ff 100%);
   color: var(--primary);
-  font-size: 24px;
-  font-weight: 800;
+  text-align: left;
   box-shadow: 0 12px 28px rgba(0, 63, 125, 0.08);
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.home-mode-name,
+.home-mode-description,
+.home-mode-meta {
+  display: block;
+}
+
+.home-mode-name {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.home-mode-description {
+  min-height: 48px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.home-mode-meta {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .home-mode-button:hover,
@@ -287,6 +325,28 @@ button {
 .play-sidebar {
   position: sticky;
   top: 12px;
+}
+
+.progress-track {
+  height: 9px;
+  margin-top: 14px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce7f5;
+}
+
+.progress-fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--primary), #1684d5);
+  transition: width 0.2s ease;
+}
+
+.mode-helper {
+  margin: 12px 2px 0;
+  color: var(--muted);
+  font-size: 13px;
 }
 
 .status-grid-sidebar {
@@ -698,6 +758,27 @@ button {
   margin-top: 20px;
 }
 
+.record-banner {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 18px 0 20px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--primary-soft);
+  color: var(--primary-strong);
+}
+
+.record-banner.is-best {
+  background: linear-gradient(90deg, #fff0f2, #fff7e8);
+  color: #a31931;
+}
+
+.record-banner span {
+  color: inherit;
+  font-size: 14px;
+}
+
 .results-summary p {
   margin: 0;
   color: var(--muted);
@@ -889,6 +970,10 @@ button {
   .home-mode-button {
     min-height: 84px;
     font-size: 22px;
+  }
+
+  .record-banner {
+    flex-direction: column;
   }
 
   .results-actions {
